@@ -1,8 +1,6 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-// nwarp is just prawn spelled backwards
-
 import ArgumentParser
 import Foundation
 
@@ -21,27 +19,6 @@ func runGit(_ args: [String]) -> String {
     return String(data: data, encoding: .utf8) ?? ""
 }
 
-func hasFolderCount(_ expected: Int) -> Bool {
-    let fileManager = FileManager.default
-    let path = fileManager.currentDirectoryPath
-
-    do {
-        let contents = try fileManager.contentsOfDirectory(atPath: path)
-
-        let folders = contents.filter { item in
-            var isDir: ObjCBool = false
-            let fullPath = (path as NSString).appendingPathComponent(item)
-            fileManager.fileExists(atPath: fullPath, isDirectory: &isDir)
-            return isDir.boolValue
-        }
-
-        return folders.count == expected
-
-    } catch {
-        print("Error reading directory:", error)
-        return false
-    }
-}
 
 @main
 struct Nwarp: ParsableCommand {
@@ -51,11 +28,14 @@ struct Nwarp: ParsableCommand {
             isGitRepoResponse.trimmingCharacters(in: .whitespacesAndNewlines) == "true"
             ? true : false
 
-        if hasFolderCount(3) {
-            print("Directory contains exactly 3 folders")
-        } else {
-            print("Different number of folders")
-        }
+        // print(listContents())
+        listContents()
+
+        // if hasFolderCount(3) {
+        //     print("Directory contains exactly 3 folders")
+        // } else {
+        //     print("Different number of folders")
+        // }
 
         if isGitRepo {
             print("Checking repository...\n")
