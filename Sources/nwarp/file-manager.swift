@@ -1,29 +1,39 @@
 import Foundation
 
-// func run(_ count: Int) -> Bool {
-//     let fm = FileManager.default
-//     let currentPath = fm.currentDirectoryPath
-// }
+// CHECK IF PATH IS A DIRECTORY
+func listDirectories() throws {
+    let fm = FileManager.default
+    let dir = URL(fileURLWithPath: fm.currentDirectoryPath)
+
+    let items = try fm.contentsOfDirectory(at: dir, includingPropertiesForKeys: [.isDirectoryKey])
+
+    for item in items {
+        let values = try item.resourceValues(forKeys: [.isDirectoryKey])
+
+        if values.isDirectory == true {
+            print("📁 \(item)")
+            print(checkIsGitRepo("\(item)"))
+            
+        }
+    }
+}
+
 
 
 // LIST CONTENTS OF CURRENT DIRECTORY
-func listContents() {
-    let fm = FileManager.default
-    let path = fm.currentDirectoryPath
+// func listContents() {
+//     let fm = FileManager.default
+//     let path = fm.currentDirectoryPath
+    
+//     try? checkIsDirectory()
 
-    do {
-        let contents = try fm.contentsOfDirectory(atPath: path)
-        // return contents.joined(separator: "\n")
-        contents.forEach {print($0)}
-
-        // for content in contents {
-        //     // print(type(of: content))
-        //     return content
-        // }
-    } catch {
-        print("Error:", error)
-    }
-}
+//     do {
+//         let contents = try fm.contentsOfDirectory(atPath: path)
+//         contents.forEach {print(type(of: $0))}
+//     } catch {
+//         print("Error:", error)
+//     }
+// }
 
 
 
