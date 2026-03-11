@@ -3,8 +3,8 @@
 
 // nwarp is just prawn spelled backwards
 
-import Foundation
 import ArgumentParser
+import Foundation
 
 func runGit(_ args: [String]) -> String {
     let process = Process()
@@ -21,24 +21,68 @@ func runGit(_ args: [String]) -> String {
     return String(data: data, encoding: .utf8) ?? ""
 }
 
+func hasFolderCount(_ expected: Int) -> Bool {
+    let fileManager = FileManager.default
+    let path = fileManager.currentDirectoryPath
+
+    do {
+        let contents = try fileManager.contentsOfDirectory(atPath: path)
+
+        let folders = contents.filter { item in
+            var isDir: ObjCBool = false
+            let fullPath = (path as NSString).appendingPathComponent(item)
+            fileManager.fileExists(atPath: fullPath, isDirectory: &isDir)
+            return isDir.boolValue
+        }
+
+        return folders.count == expected
+
+    } catch {
+        print("Error reading directory:", error)
+        return false
+    }
+}
+
 @main
 struct Nwarp: ParsableCommand {
     func run() throws {
-        print("Checking repository...\n")
+        let isGitRepoResponse: String = runGit(["rev-parse", "--is-inside-work-tree"])
+        let isGitRepo: Bool =
+            isGitRepoResponse.trimmingCharacters(in: .whitespacesAndNewlines) == "true"
+            ? true : false
 
-        let status = runGit(["status", "--short"])
-
-        if status.isEmpty {
-            print("Working directory clean")
+        if hasFolderCount(3) {
+            print("Directory contains exactly 3 folders")
         } else {
-            print("Uncommited changes:")
-            print(status)
+            print("Different number of folders")
         }
 
-        let ahead = runGit(["rev-list", "--count", "origin/main..HEAD"])
-        let behind = runGit(["rev-list", "--count", "HEAD..origin/main"])
+        if isGitRepo {
+            print("Checking repository...\n")
 
-        print("\nCommits ahead of origin/main:", ahead.trimmingCharacters(in: .whitespacesAndNewlines))
-        print("Commits behind origin/main:", behind.trimmingCharacters(in: .whitespacesAndNewlines))
+            let status = runGit(["status", "--short"])
+
+            if status.isEmpty {
+                print("Working directory clean")
+
+            } else {
+                print("Uncommited changes:")
+                print(status)
+            }
+
+            let ahead = runGit(["rev-list", "--count", "origin/main..HEAD"])
+            let behind = runGit(["rev-list", "--count", "HEAD..origin/main"])
+
+            print(
+                "\nCommits ahead of origin/main:",
+                ahead.trimmingCharacters(in: .whitespacesAndNewlines)
+            )
+            print(
+                "Commits behind origin/main:",
+                behind.trimmingCharacters(in: .whitespacesAndNewlines))
+        } else {
+            print("This is not a git repo")
+        }
+
     }
 }
