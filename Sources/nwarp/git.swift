@@ -35,21 +35,21 @@ func runGitSideQuest(args: [String]) {
 }
 
 func checkIsGitDifferent(_ path: String) {
-    runGitSideQuest(args: ["-C", "\(path)", "fetch", "origin"])
+    runGitSideQuest(args: ["-C", "\(path)", "fetch"])
     runGitSideQuest(args: ["-C", "\(path)", "diff", "--quiet", "main", "origin/main"])
 
-    let response = runCommand("echo $?", path: path)
+    let response = runCommand("echo $?")
     print(response)
 
-    // print(type(of: runCommand("echo $?")))
+    print(type(of: response))
 
-    if response == "0" {
-        print("There are no changes between local and remote")
-    } else if response == "1" {
-        print("Yes, local repo is different from remote")
-    } else {
-        print("Unknown error? Line 33")
-    }
+    // if response == "0" {
+    //     print("There are no changes between local and remote")
+    // } else if response == "1" {
+    //     print("Yes, local repo is different from remote")
+    // } else {
+    //     print("Unknown error? Line 33")
+    // }
 
     // return result.trimmingCharacters(in: .whitespacesAndNewlines) == "true" ? true : false
 }

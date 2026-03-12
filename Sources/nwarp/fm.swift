@@ -25,18 +25,13 @@ func checkLocalDirectories() throws {
     }
 }
 
-func runCommand(_ command: String, path: String) -> String {
+func runCommand(_ command: String) -> Any {
     let process = Process()
-    let pipe = Pipe()
 
-    process.executableURL = URL(fileURLWithPath: path)
     process.arguments = [command]
-    process.standardOutput = pipe
-    process.standardError = pipe
 
-    try! process.run()
+    try? process.run()
     process.waitUntilExit()
 
-    let data = pipe.fileHandleForReading.readDataToEndOfFile()
-    return String(data: data, encoding: .utf8) ?? ""
+    return process.terminationStatus
 }
