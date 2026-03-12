@@ -15,7 +15,7 @@ func checkLocalDirectories() throws {
 
         if values.isDirectory == true {
             print("📁 \(item.lastPathComponent)")
-            print(checkIsGitRepo("\(item.lastPathComponent)"))
+            print(checkHasGitRepo("\(item.lastPathComponent)"))
         }
     }
 }

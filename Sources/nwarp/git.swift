@@ -18,7 +18,13 @@ func runGit(args: [String]) -> String {
     return String(data: data, encoding: .utf8) ?? ""
 }
 
-func checkIsGitRepo(_ dir: String) -> Bool {
+
+func isGitDifferent(_ dir: String) -> Bool {
+    let result = runGit(args: ["diff", "--quiet", "main", "origin/main"])
+    return result.trimmingCharacters(in: .whitespacesAndNewlines) == "true" ? true : false
+}
+
+func checkHasGitRepo(_ dir: String) -> Bool {
     let result = runGit(args: ["-C", "\(dir)", "rev-parse", "--is-inside-work-tree"])
     return result.trimmingCharacters(in: .whitespacesAndNewlines) == "true" ? true : false
 }
