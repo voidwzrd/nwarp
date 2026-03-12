@@ -1,45 +1,21 @@
 import Foundation
 
-// CHECK IF PATH IS A DIRECTORY
-func listDirectories() throws -> String {
-    let fm = FileManager.default
-    let url = URL(fileURLWithPath: fm.currentDirectoryPath)
+// CHECK IF LOCAL DIRECTORIES CONTAIN GIT REPOS
+func checkLocalDirectories() throws {
+    let fileManager: FileManager = FileManager.default
+    let path: URL = URL(fileURLWithPath: fileManager.currentDirectoryPath)
 
-    let items = try fm.contentsOfDirectory(at: url,
-    includingPropertiesForKeys: [.isDirectoryKey],
-    options: [.skipsHiddenFiles])
+    let items = try fileManager.contentsOfDirectory(
+        at: path,
+        includingPropertiesForKeys: [.isDirectoryKey],
+        options: [.skipsHiddenFiles])
 
     for item in items {
-        let values = try item.resourceValues(forKeys: [.isDirectoryKey])
-        let directories  = try? url.resourceValues(forKeys: [.isDirectoryKey])
-
-
+        let values: URLResourceValues = try item.resourceValues(forKeys: [.isDirectoryKey])
 
         if values.isDirectory == true {
-            print("📁 \(item)")
-            print(checkIsGitRepo("\(item)"))
-            
+            print("📁 \(item.lastPathComponent)")
+            print(checkIsGitRepo("\(item.lastPathComponent)"))
         }
-
-        return directories?.isDirectory == true ? url.lastPathComponent : "No"
     }
-
-    return "Hello"
 }
-
-
-
-// LIST CONTENTS OF CURRENT DIRECTORYcd ..
-// func listContents() {
-//     let fm = FileManager.default
-//     let path = fm.currentDirectoryPath
-    
-//     try? checkIsDirectory()
-
-//     do {
-//         let contents = try fm.contentsOfDirectory(atPath: path)
-//         contents.forEach {print(type(of: $0))}
-//     } catch {
-//         print("Error:", error)
-//     }
-// }

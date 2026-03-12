@@ -7,26 +7,8 @@ import Foundation
 @main
 struct Nwarp: ParsableCommand {
     func run() throws {
-        let fm = FileManager.default
-        let url = URL(fileURLWithPath: fm.currentDirectoryPath)
-
-        let items = try fm.contentsOfDirectory(
-            at: url,
-            includingPropertiesForKeys: [.isDirectoryKey],
-            options: [.skipsHiddenFiles])
-
-        for item in items {
-            let values = try item.resourceValues(forKeys: [.isDirectoryKey])
-            // let directories = try? url.resourceValues(forKeys: [.isDirectoryKey])
-
-            if values.isDirectory == true {
-                print("📁 \(item.lastPathComponent)")
-                print(checkIsGitRepo("\(item.lastPathComponent)"))
-
-            }
-
-            // return directories?.isDirectory == true ? url.lastPathComponent : "No"
-        }
+    try? checkLocalDirectories()
+        
 
 
         // let fm: FileManager = FileManager.default
