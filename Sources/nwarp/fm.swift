@@ -15,7 +15,28 @@ func checkLocalDirectories() throws {
 
         if values.isDirectory == true {
             print("📁 \(item.lastPathComponent)")
-            print(checkHasGitRepo("\(item.lastPathComponent)"))
+
+            let isGitRepo = checkHasGitRepo("\(item.lastPathComponent)")
+
+            if isGitRepo == true {
+                checkIsGitDifferent("\(item.lastPathComponent)")
+            }
         }
     }
+}
+
+func runCommand(_ command: String) -> String {
+    let process = Process()
+    let pipe = Pipe()
+
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    process.arguments = [command]
+    process.standardOutput = pipe
+    process.standardError = pipe
+
+    try! process.run()
+    process.waitUntilExit()
+
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    return String(data: data, encoding: .utf8) ?? ""
 }

@@ -15,13 +15,40 @@ func runGit(args: [String]) -> String {
     process.waitUntilExit()
 
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    
     return String(data: data, encoding: .utf8) ?? ""
 }
 
+// RUN GIT
+func runGitSideQuest(args: [String]) {
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+    process.arguments = args
+    // process.currentDirectoryURL = URL(fileURLWithPath: path)
 
-func isGitDifferent(_ dir: String) -> Bool {
-    let result = runGit(args: ["diff", "--quiet", "main", "origin/main"])
-    return result.trimmingCharacters(in: .whitespacesAndNewlines) == "true" ? true : false
+    let pipe = Pipe()
+    process.standardOutput = pipe
+    process.standardError = pipe
+
+    try! process.run()
+    process.waitUntilExit()
+}
+
+func checkIsGitDifferent(_ dir: String) {
+    runGitSideQuest(args: ["-C", "\(dir)", "diff", "--quiet", "main", "origin/main"])
+    let response = runCommand("echo $?")
+
+    // print(type(of: runCommand("echo $?")))
+
+    if response == "0" {
+        print("There are no changes between local and remote")
+    } else if response == "1" {
+        print("Yes, local repo is different from remote")
+    } else {
+        print("Unknown error? Line 33")
+    }
+
+    // return result.trimmingCharacters(in: .whitespacesAndNewlines) == "true" ? true : false
 }
 
 func checkHasGitRepo(_ dir: String) -> Bool {
