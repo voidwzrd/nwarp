@@ -25,11 +25,11 @@ func checkLocalDirectories() throws {
     }
 }
 
-func runCommand(_ command: String) -> String {
+func runCommand(_ command: String, path: String) -> String {
     let process = Process()
     let pipe = Pipe()
 
-    process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+    process.executableURL = URL(fileURLWithPath: path)
     process.arguments = [command]
     process.standardOutput = pipe
     process.standardError = pipe

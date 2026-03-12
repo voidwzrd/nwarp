@@ -34,9 +34,12 @@ func runGitSideQuest(args: [String]) {
     process.waitUntilExit()
 }
 
-func checkIsGitDifferent(_ dir: String) {
-    runGitSideQuest(args: ["-C", "\(dir)", "diff", "--quiet", "main", "origin/main"])
-    let response = runCommand("echo $?")
+func checkIsGitDifferent(_ path: String) {
+    runGitSideQuest(args: ["-C", "\(path)", "fetch", "origin"])
+    runGitSideQuest(args: ["-C", "\(path)", "diff", "--quiet", "main", "origin/main"])
+
+    let response = runCommand("echo $?", path: path)
+    print(response)
 
     // print(type(of: runCommand("echo $?")))
 
